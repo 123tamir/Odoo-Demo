@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Sale: list -->
+    <record id="sd_sale_view_tree" model="ir.ui.view">
+        <field name="name">sd.sale.tree</field>
+        <field name="model">sd.sale</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="date"/>
+                <field name="customer_id"/>
+                <field name="product_id"/>
+                <field name="quantity"/>
+                <field name="amount" sum="Total"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'confirmed'"
+                       decoration-info="state == 'draft'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Sale: form -->
+    <record id="sd_sale_view_form" model="ir.ui.view">
+        <field name="name">sd.sale.form</field>
+        <field name="model">sd.sale</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="customer_id"/>
+                        </group>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="quantity"/>
+                            <field name="amount"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Sale: pivot + graph + search -->
+    <record id="sd_sale_view_pivot" model="ir.ui.view">
+        <field name="name">sd.sale.pivot</field>
+        <field name="model">sd.sale</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="product_id" type="row"/>
+                <field name="date" interval="month" type="col"/>
+                <field name="amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="sd_sale_view_graph" model="ir.ui.view">
+        <field name="name">sd.sale.graph</field>
+        <field name="model">sd.sale</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="date" interval="month"/>
+                <field name="amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="sd_sale_view_search" model="ir.ui.view">
+        <field name="name">sd.sale.search</field>
+        <field name="model">sd.sale</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="customer_id"/>
+                <field name="product_id"/>
+                <filter name="confirmed" string="Confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <separator/>
+                <filter name="date_filter" string="Date" date="date"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_customer" string="Customer" context="{'group_by': 'customer_id'}"/>
+                    <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_month" string="Month" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Product + Customer: simple editable lists -->
+    <record id="sd_product_view_tree" model="ir.ui.view">
+        <field name="name">sd.product.tree</field>
+        <field name="model">sd.product</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+                <field name="category"/>
+                <field name="unit_price"/>
+                <field name="stock_qty"/>
+                <field name="reorder_level"/>
+                <field name="is_low_stock"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="sd_customer_view_tree" model="ir.ui.view">
+        <field name="name">sd.customer.tree</field>
+        <field name="model">sd.customer</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+                <field name="city"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_sd_dashboard" model="ir.actions.client">
+        <field name="name">Dashboard</field>
+        <field name="tag">sales_dashboard.dashboard</field>
+    </record>
+
+    <record id="action_sd_sale" model="ir.actions.act_window">
+        <field name="name">Sales</field>
+        <field name="res_model">sd.sale</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+    </record>
+
+    <record id="action_sd_product" model="ir.actions.act_window">
+        <field name="name">Products</field>
+        <field name="res_model">sd.product</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <record id="action_sd_customer" model="ir.actions.act_window">
+        <field name="name">Customers</field>
+        <field name="res_model">sd.customer</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <!-- Menus -->
+    <menuitem id="menu_sd_root" name="Sales Dashboard" sequence="10"/>
+    <menuitem id="menu_sd_dashboard" name="Dashboard" parent="menu_sd_root" action="action_sd_dashboard" sequence="1"/>
+    <menuitem id="menu_sd_sale" name="Sales" parent="menu_sd_root" action="action_sd_sale" sequence="2"/>
+    <menuitem id="menu_sd_product" name="Products" parent="menu_sd_root" action="action_sd_product" sequence="3"/>
+    <menuitem id="menu_sd_customer" name="Customers" parent="menu_sd_root" action="action_sd_customer" sequence="4"/>
+
+</odoo>

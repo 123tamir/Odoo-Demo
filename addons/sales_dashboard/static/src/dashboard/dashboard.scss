@@ -1,0 +1,14 @@
+.o_sd_dashboard {
+    background: #f7f7f9;
+
+    .o_sd_kpi {
+        border-left: 4px solid #714b67;
+    }
+    .o_sd_kpi_warn {
+        border-left-color: #dc3545;
+    }
+    .o_sd_kpi_value {
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+}
